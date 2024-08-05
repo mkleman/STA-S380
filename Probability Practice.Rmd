@@ -1,0 +1,41 @@
+---
+title: "Probability Practice"
+output: html_document
+date: "2024-08-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Part A.
+Visitors to your website are asked to answer a single survey question before they get access to the content on the page. Among all of the users, there are two categories: Random Clicker (RC), and Truthful Clicker (TC). There are two possible answers to the survey: yes and no. Random clickers would click either one with equal probability. You are also giving the information that the expected fraction of random clickers is 0.3. After a trial period, you get the following survey results: 65% said Yes and 35% said No. What fraction of people who are truthful clickers answered yes? Hint: use the rule of total probability.
+
+$$ P(\text{Yes}) = P(\text{Y}|\text{Truthful}) * P(\text{Truthful}) + P(\text{Y}|\text{Random}) * P(\text{Random})$$
+$$ .65 = P(\text{Y}|\text{Truthful}) *.7 + .5 * .3 $$
+$$ P(\text{Y}|\text{Truthful}) = \frac{(.65 - (.5 * .3))}{.7}$$
+$$P(\text{Y}|\text{Truthful}) = .714$$
+Using the total probability rule we can determine that the fraction of truthful people who answered Yes is .714
+
+###Part B. 
+Imagine a medical test for a disease with the following two attributes:
+
+The sensitivity is about 0.993. That is, if someone has the disease, there is a probability of 0.993 that they will test positive.
+The specificity is about 0.9999. This means that if someone doesn't have the disease, there is probability of 0.9999 that they will test negative.
+In the general population, incidence of the disease is reasonably rare: about 0.0025% of all people have it (or 0.000025 as a decimal probability).
+Suppose someone tests positive. What is the probability that they have the disease?
+
+```{r}
+pos_have = .993
+neg_dont_have = .9999
+pos_dont_have = 1 - .9999
+have = .000025
+dont_have = 1 - have
+
+pos = (pos_have * have) + ((1-neg_dont_have)* dont_have)
+
+has_pos = (pos_have * have) / pos
+has_pos
+```
+
+Using Baye's Theorem the probability that someone has the disease given that they tested positive is .1988824.
