@@ -1,0 +1,75 @@
+---
+title: "Wrangling the Billboard 100"
+output: html_document
+date: "2024-08-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+# Import the data set
+billboard <- read.csv("~/Documents/GitHub/STA-S380/billboard.csv")
+```
+
+```{r}
+
+counts <- billboard %>% 
+  count(song)
+
+top_ten_songs <- counts %>% 
+  top_n(10,n) %>% 
+  pull(song)
+
+top_ten_table <- billboard %>%
+  filter(song %in% top_ten_songs) %>%
+  left_join(counts, by = "song") %>%
+  select(performer, song, n)
+
+top_ten_table <- top_ten_table %>%
+  rename(count = n)
+
+top_ten_table
+```
+
+```{r}
+cutoff <- billboard %>% 
+  filter(! (year %in% c(1958, 2021)))
+
+unique_counts <- cutoff %>% 
+  group_by(year) %>% 
+  summarize(unique_songs = n_distinct(song))
+
+
+ggplot(unique_counts, aes(x = year, y = unique_songs)) +
+  geom_line(color = "blue") +
+  labs(x = "Year", y = "Counts", title = "Musical Diversity")
+```
+
+```{r}
+filtered <- billboard %>% 
+  group_by(performer, song) %>% 
+  summarize(num_weeks = n()) %>% 
+  filter(num_weeks >= 10)
+
+performer_counts <- filtered %>% 
+  group_by(performer) %>% 
+  summarize(num_entries = n()) %>% 
+  filter(num_entries >= 30)
+
+ggplot(performer_counts, aes(x=performer, y=num_entries)) +
+  geom_bar(stat = "identity") +
+  coord_flip()+
+  labs(
+    x= "Performer",
+    y= "Number of Ten Week Hits"
+  )
+
+```
+

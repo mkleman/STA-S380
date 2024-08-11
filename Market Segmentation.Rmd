@@ -1,0 +1,112 @@
+---
+title: "Market Segmentation"
+output: html_document
+date: "2024-08-11"
+---
+
+---
+title: "Market Segmentation"
+output: html_document
+date: "2024-08-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(cluster)
+```
+
+
+```{r}
+# Import Data
+social_marketing <- read.csv("~/Downloads/social_marketing.csv", row.names = 1)
+social_marketing
+```
+
+After looking at the initial data, I decided to drop all users who had more than 1 spam tweet and more than 1 adult tweet. This seemed like an appropriate way to remove follower that may be a bot.
+
+```{r}
+# Drop all users who have and span and adult content more than once (Potential Spa)
+social_marketing <- social_marketing %>% 
+  filter(spam <= 1)
+
+social_marketing <- social_marketing %>% 
+  filter(adult <= 1)
+```
+
+Because the chatter column was used to label all miscellaneous tweets, I decided to drop this data as well. This column does not provide any unique information that would be valuable for identifying market segments. 
+
+```{r}
+# Drop chatter column because it provides value
+social_marketing <- social_marketing %>% select(-chatter, )
+```
+
+
+```{r}
+numeric_df <- social_marketing %>% select_if(is.numeric)
+corr_matrix <-cor(numeric_df)
+corrplot(corr_matrix, method="color")
+```
+From the correlation matrix we see that there is strong correlation between:
+
+1) Personal Fitness and Health/Nutrition
+2) College/University and Online Gaming
+3) Cooking and Fashion
+4) Fashion and Beauty
+
+These associations are a great starting point for understanding what our market segments might be, but to understand multi-dimensional relationships, we can perform k-means clustering.
+
+```{r}
+# Center/scale the data
+social_marketing = scale(social_marketing, center=TRUE, scale=TRUE)
+
+library(foreach)
+k_grid = seq(2, 30, by=1)
+SSE_grid = foreach(k = k_grid, .combine='c') %do% {
+cluster_k = kmeans(social_marketing, k, nstart=50)
+cluster_k$tot.withinss
+}
+
+plot(k_grid, SSE_grid, type='b', pch=19, xlab="Number of Clusters (k)", ylab="Total Within-Cluster SSE", main="Elbow Plot for K-Means")
+```
+
+The elbow plot reveals that creating 14 clusters would be optimal, but for the sake of interpretation by stakeholders and myself, I feel like 5 clusters may be a more appropriate choice. 
+
+```{r}
+# Perform K-means clustering
+social_marketing_clustering <- kmeans(social_marketing, centers=5, nstart=25)
+```
+
+```{r}
+social_marketing_clustering$centers
+```
+```{r}
+``
+Cluster 1: Personal Fitness, Health/Nutrition
+
+Cluster 2: Travel, Politics, Computers, Automotive
+
+Cluster 3: Current Events, Sports Fandom, TV-Film, Shopping
+
+Cluster 4: Online-Gaming, College/University, Sports-Playing
+
+Cluster 5: Cooking, Beauty, Photo-Sharing, Fashion
+```
+
+After performing k-means clustering with 5 clusters, we have identified 5 market segments for Nutrient H20. 
+
+1. Health and Wellness Guru - These people often tweet about personal fitness and health/nutrition. We have to imagine that this is who Nutrient H20 markets their products toward. 
+
+2. Educated Male Adult - These People often tweet about traveling, politics, computers and automobiles. 
+
+3. Enjoyer of indoor activities - These people often tweet about current events, sports, tv-film, and shopping. Someone who may hear about your beverage from an advertisement on tv or while shopping on their favorite website. 
+
+4. College Student - These people often tweet about gaming, college/university, and playing sports. These people drink Nutrient H20 because it's convenient and "cool". Maybe it's their favorite beverage after a pick-up soccer game or because it was their favorite beverage from childhood and they miss home.
+
+5. Influencers - These people often tweet about cooking, beauty, photo-sharing and fashion. Probably a demographic that is mostly female because they are often tweeting about beauty and fashion. Since they are often cooking, they probably care about high quality ingredients.
