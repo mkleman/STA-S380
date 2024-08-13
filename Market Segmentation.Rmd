@@ -98,12 +98,12 @@ cluster_centers
 ```
 We used the highest values in each cluster to identify characteristics of markets segments for NutritionH20. The results are summarized below:
 
-1. **Suburban Dad - These users often tweet about sports-fandom, family, religion, parenting, school, and food. They probably attend community events and most-likely prioritize products that support a balanced-lifestyle for their family and community.
+1. **Suburban Dad** - These users often tweet about sports-fandom, family, religion, parenting, school, and food. They probably attend community events and most-likely prioritize products that support a balanced-lifestyle for their family and community.
 
-2. **The Generalist - Users in this market segment engage and speak about a wide array of topics and interests online. They are a less predictable group, but they may respond well to a wide variety of marketing strategies from NutrientH20.
+2. **The Generalist** - Users in this market segment engage and speak about a wide array of topics and interests online. They are a less predictable group, but they may respond well to a wide variety of marketing strategies from NutrientH20.
 
-3. **The Gym Bro - These people often tweet about personal fitness and health/nutrition. We imagine that this is who Nutrient H20 markets their products toward. This market segment cares about quality, and how this product will impact their overall health and wellness.
+3. **The Gym Bro** - These people often tweet about personal fitness and health/nutrition. We imagine that this is who Nutrient H20 markets their products toward. This market segment cares about quality, and how this product will impact their overall health and wellness.
 
-4. **The Know-It-All - These users often tweet about traveling, politics, computers and automobiles. This market segment probably spends too much time on reddit. They are educated,  and probably opinionated. It will be important to target this market segment with detailed product information that appeals to their intellectual curiousity.
+4. **The Know-It-All** - These users often tweet about traveling, politics, computers and automobiles. This market segment probably spends too much time on reddit. They are educated,  and probably opinionated. It will be important to target this market segment with detailed product information that appeals to their intellectual curiousity.
 
-5. **The Brand Lover - The Brand Lover - These people often tweet about cooking, beauty, photo-sharing and fashion. A demographoc that cares more about what is "popular" than what is good. These are the people who will buy NutrientH20 because they saw it on instagram or because their favorite actor drinks it.
+5. **The Brand Lover** - The Brand Lover - These people often tweet about cooking, beauty, photo-sharing and fashion. A demographoc that cares more about what is "popular" than what is good. These are the people who will buy NutrientH20 because they saw it on instagram or because their favorite actor drinks it.
