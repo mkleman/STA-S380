@@ -1,12 +1,8 @@
 ---
 title: "Market Segmentation"
-output: html_document
-date: "2024-08-11"
----
-
----
-title: "Market Segmentation"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 date: "2024-08-11"
 ---
 
@@ -26,10 +22,11 @@ library(cluster)
 ```{r}
 # Import Data
 social_marketing <- read.csv("~/Downloads/social_marketing.csv", row.names = 1)
-social_marketing
 ```
 
-After looking at the initial data, I decided to drop all users who had more than 1 spam tweet and more than 1 adult tweet. This seemed like an appropriate way to remove follower that may be a bot.
+After looking at the initial data, we decided to drop all users who had more than 1 spam tweet and more than 1 adult tweet. This seemed like an appropriate way to remove followers that may be a bot.
+
+After removing those users, we decided to drop the spam and adult column because it is not going to provide any valuable imformation about NutritionH20's market segments. 
 
 ```{r}
 # Drop all users who have and span and adult content more than once (Potential Spa)
@@ -38,15 +35,19 @@ social_marketing <- social_marketing %>%
 
 social_marketing <- social_marketing %>% 
   filter(adult <= 1)
+
+social_marketing <- social_marketing %>% select(-spam, -adult)
 ```
 
-Because the chatter column was used to label all miscellaneous tweets, I decided to drop this data as well. This column does not provide any unique information that would be valuable for identifying market segments. 
+Because the uncategorized column was used to label all miscellaneous tweets, we decided to drop this column as well. These columns does not provide any unique information that would be valuable for identifying market segments. Out of fear that the chatter column was used for a similar purchase, we ultimately decided to drop this column as well.
+
 
 ```{r}
 # Drop chatter column because it provides value
-social_marketing <- social_marketing %>% select(-chatter, )
+social_marketing <- social_marketing %>% select(-chatter, -uncategorized)
 ```
 
+As a starting point, we created a correlation matrix to begin to understand the potential market segments that may exist. 
 
 ```{r}
 numeric_df <- social_marketing %>% select_if(is.numeric)
@@ -63,8 +64,12 @@ From the correlation matrix we see that there is strong correlation between:
 These associations are a great starting point for understanding what our market segments might be, but to understand multi-dimensional relationships, we can perform k-means clustering.
 
 ```{r}
-# Center/scale the data
+# Center/scale the data for the sake of interpretability
 social_marketing = scale(social_marketing, center=TRUE, scale=TRUE)
+```
+
+
+```{r, warning = FALSE}
 
 library(foreach)
 k_grid = seq(2, 30, by=1)
@@ -76,37 +81,29 @@ cluster_k$tot.withinss
 plot(k_grid, SSE_grid, type='b', pch=19, xlab="Number of Clusters (k)", ylab="Total Within-Cluster SSE", main="Elbow Plot for K-Means")
 ```
 
-The elbow plot reveals that creating 14 clusters would be optimal, but for the sake of interpretation by stakeholders and myself, I feel like 5 clusters may be a more appropriate choice. 
+Creating the elbow plot for this problem proved to be extremely unuseful. For the sake of interpretability of the market segments, we decided to use 5 centers in our kmeans model.
 
 ```{r}
 # Perform K-means clustering
+set.seed(123)
 social_marketing_clustering <- kmeans(social_marketing, centers=5, nstart=25)
 ```
 
+Below we can see information about the centers of each cluster. Keep in mind that the data has been scaled so all values are in terms of the number of standard deviations away from the mean. 
+
 ```{r}
-social_marketing_clustering$centers
+cluster_centers <- data.frame(social_marketing_clustering$centers)
+row.names(cluster_centers) <- c("Cluster 1", "Cluster 2", "Cluster 3", "Cluster 4","Cluster 5")
+cluster_centers
 ```
-```{r}
-``
-Cluster 1: Personal Fitness, Health/Nutrition
+We used the highest values in each cluster to identify characteristics of markets segments for NutritionH20. The results are summarized below:
 
-Cluster 2: Travel, Politics, Computers, Automotive
+1. **Suburban Dad - These users often tweet about sports-fandom, family, religion, parenting, school, and food. They probably attend community events and most-likely prioritize products that support a balanced-lifestyle for their family and community.
 
-Cluster 3: Current Events, Sports Fandom, TV-Film, Shopping
+2. **The Generalist - Users in this market segment engage and speak about a wide array of topics and interests online. They are a less predictable group, but they may respond well to a wide variety of marketing strategies from NutrientH20.
 
-Cluster 4: Online-Gaming, College/University, Sports-Playing
+3. **The Gym Bro - These people often tweet about personal fitness and health/nutrition. We imagine that this is who Nutrient H20 markets their products toward. This market segment cares about quality, and how this product will impact their overall health and wellness.
 
-Cluster 5: Cooking, Beauty, Photo-Sharing, Fashion
-```
+4. **The Know-It-All - These users often tweet about traveling, politics, computers and automobiles. This market segment probably spends too much time on reddit. They are educated,  and probably opinionated. It will be important to target this market segment with detailed product information that appeals to their intellectual curiousity.
 
-After performing k-means clustering with 5 clusters, we have identified 5 market segments for Nutrient H20. 
-
-1. Health and Wellness Guru - These people often tweet about personal fitness and health/nutrition. We have to imagine that this is who Nutrient H20 markets their products toward. 
-
-2. Educated Male Adult - These People often tweet about traveling, politics, computers and automobiles. 
-
-3. Enjoyer of indoor activities - These people often tweet about current events, sports, tv-film, and shopping. Someone who may hear about your beverage from an advertisement on tv or while shopping on their favorite website. 
-
-4. College Student - These people often tweet about gaming, college/university, and playing sports. These people drink Nutrient H20 because it's convenient and "cool". Maybe it's their favorite beverage after a pick-up soccer game or because it was their favorite beverage from childhood and they miss home.
-
-5. Influencers - These people often tweet about cooking, beauty, photo-sharing and fashion. Probably a demographic that is mostly female because they are often tweeting about beauty and fashion. Since they are often cooking, they probably care about high quality ingredients.
+5. **The Brand Lover - The Brand Lover - These people often tweet about cooking, beauty, photo-sharing and fashion. A demographoc that cares more about what is "popular" than what is good. These are the people who will buy NutrientH20 because they saw it on instagram or because their favorite actor drinks it.
